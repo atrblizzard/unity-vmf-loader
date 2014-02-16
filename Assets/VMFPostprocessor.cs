@@ -16,21 +16,16 @@ namespace UnityVMFLoader
 
 			foreach (var asset in importedAssets)
 			{
-				Debug.Log("VMF imported: " + asset);
+				try
+				{
+					VMFParser.Parse(Path.Combine(Directory.GetParent(Application.dataPath).FullName, asset));
+				}
+				finally
+				{
+					// We can get rid of the asset once we have imported its contents.
 
-				// We can get rid of the file once we have the contents imported.
-
-				AssetDatabase.DeleteAsset(asset);
-			}
-
-			foreach (var asset in deletedAssets)
-			{
-				Debug.Log("VMF deleted: " + asset);
-			}
-
-			for (var i = 0; i < movedAssets.Length; i++)
-			{
-				Debug.Log("VMF moved from " + movedFromPath[i] + " to " + movedAssets[i]);
+					AssetDatabase.DeleteAsset(asset);
+				}
 			}
 		}
 	}
