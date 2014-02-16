@@ -15,6 +15,10 @@ public class VMFPostprocessor : AssetPostprocessor
 		foreach (string asset in importedAssets)
 		{
 			Debug.Log("VMF imported: " + asset);
+
+			// We can get rid of the file once we have the contents imported.
+
+			AssetDatabase.DeleteAsset(asset);
 		}
 		
 		foreach (string asset in deletedAssets)
