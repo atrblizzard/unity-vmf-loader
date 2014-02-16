@@ -1,0 +1,16 @@
+*.DotSettings.user
+*.[Rr]e[Ss]harper
+*.booproj
+*.csproj
+*.pidb
+*.resharper
+*.sln
+*.suo
+*.unityproj
+*.user
+*.userprefs
+.DS_Store
+[Ll]ibrary/
+[Oo]bj/
+[Tt]emp/
+_ReSharper*/
