@@ -96,7 +96,38 @@ namespace UnityVMFLoader
 			{
 				GameObject gameObject = new GameObject("Solid " + solid.Identifier);
 
-				gameObject.AddComponent<MeshFilter>().mesh = (Mesh) solid;
+				gameObject.AddComponent<MeshRenderer>();
+				gameObject.AddComponent<MeshFilter>();
+
+				gameObject.GetComponent<MeshFilter>().sharedMesh = (Mesh) solid;
+
+				var mesh = gameObject.GetComponent<MeshFilter>().sharedMesh;
+
+				// The vertices of the mesh are in world coordinates so we'll need to center them.
+
+				var center = new Vector3();
+
+				foreach (var vertex in mesh.vertices)
+				{
+					center += vertex;
+				}
+
+				center /= mesh.vertices.Count();
+
+				var vertices = mesh.vertices;
+
+				for (var vertex = 0; vertex < vertices.Count(); vertex++)
+				{
+					vertices[vertex] -= center;
+				}
+
+				mesh.vertices = vertices;
+
+				mesh.RecalculateBounds();
+
+				// And move the object itself to those world coordinates.
+
+				gameObject.transform.position = center;
 			}
 
 			return root;
@@ -259,6 +290,15 @@ namespace UnityVMFLoader
 			vertices[vertex++] = (side.PointC + (side.PointA - side.PointB)) * inchesInMeters;
 
 			mesh.vertices = vertices;
+
+			var textureCoordinates = new Vector2[vertices.Length];
+
+			for (var i = 0; i < vertices.Length; i++)
+			{
+				textureCoordinates[i] = new Vector2(vertices[i].x, vertices[i].z);
+			}
+
+			mesh.uv = textureCoordinates;
 
 			mesh.RecalculateNormals();
 
