@@ -270,6 +270,23 @@ namespace UnityVMFLoader
 						float.Parse(match.Groups[3].Captures[2].Value)
 					);
 
+					// Source uses Z for up, but Unity uses Y.
+
+					var y = PointA.y;
+
+					PointA.y = PointA.z;
+					PointA.z = y;
+
+					y = PointB.y;
+
+					PointB.y = PointB.z;
+					PointB.z = y;
+
+					y = PointC.y;
+
+					PointC.y = PointC.z;
+					PointC.z = y;
+
 					break;
 			}
 		}
