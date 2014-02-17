@@ -64,6 +64,18 @@ namespace UnityVMFLoader
 
 								break;
 
+							case "group":
+
+								active = new Group();
+
+								break;
+
+							case "editor":
+
+								active = new Editor();
+
+								break;
+
 							case "entity":
 
 								active = new Entity();
@@ -95,6 +107,17 @@ namespace UnityVMFLoader
 						break;
 				}
 			}
+
+			// Create groups from the parsed tree.
+
+			var groups = new Dictionary<Group, GameObject>();
+
+			foreach (var group in root.Children.OfType<World>().First().Children.OfType<Group>())
+			{
+				groups[group] = new GameObject("Group " + group.Identifier);
+			}
+
+			// Create solids from the parsed tree.
 
 			var solids = root.Children.OfType<World>().First().Children.OfType<Solid>();
 
@@ -139,6 +162,38 @@ namespace UnityVMFLoader
 				// And move the object itself to those world coordinates.
 
 				gameObject.transform.position = center;
+
+				// If the solid is in a group, move it there.
+
+				var editor = solid.Parent.Children.OfType<Editor>().FirstOrDefault();
+
+				if (editor != null)
+				{
+					var pair = groups.FirstOrDefault(x => x.Key.Identifier == editor.GroupIdentifier);
+
+					if (pair.Value != null)
+					{
+						gameObject.transform.parent = pair.Value.transform;
+					}
+				}
+			}
+
+			// Destroy the GameObjects of groups with a single child or none.
+
+			var groupsCopy = groups.ToDictionary(entry => entry.Key, entry => entry.Value);
+
+			foreach (var pair in groupsCopy.Where(x => x.Value.GetComponentsInChildren<Transform>().Length < 3))
+			{
+				var child = pair.Key.Children.FirstOrDefault();
+
+				if (child != null)
+				{
+					child.Parent = pair.Key.Parent;
+				}
+
+				UnityEngine.Object.DestroyImmediate(pair.Value);
+
+				groups.Remove(pair.Key);
 			}
 
 			return root;
@@ -168,7 +223,7 @@ namespace UnityVMFLoader
 
 			set
 			{
-				if (parent != null && value == null)
+				if (parent != null)
 				{
 					parent.children.Remove(this);
 				}
@@ -202,6 +257,30 @@ namespace UnityVMFLoader
 	public class World : Node
 	{
 
+	}
+
+	public class Group : Node
+	{
+
+	}
+
+	public class Editor : Node
+	{
+		public uint GroupIdentifier;
+
+		public override void Parse(string key, string value)
+		{
+			base.Parse(key, value);
+
+			switch (key)
+			{
+				case "groupid":
+
+					GroupIdentifier = Convert.ToUInt32(value);
+
+					break;
+			}
+		}
 	}
 
 	public class Entity : Node
