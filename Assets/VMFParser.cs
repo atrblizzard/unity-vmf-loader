@@ -251,10 +251,12 @@ namespace UnityVMFLoader
 
 			var vertex = 0;
 
-			vertices[vertex++] = side.PointA;
-			vertices[vertex++] = side.PointB;
-			vertices[vertex++] = side.PointC;
-			vertices[vertex++] = side.PointC + (side.PointA - side.PointB);
+			var inchesInMeters = 0.0254f;
+
+			vertices[vertex++] = side.PointA * inchesInMeters;
+			vertices[vertex++] = side.PointB * inchesInMeters;
+			vertices[vertex++] = side.PointC * inchesInMeters;
+			vertices[vertex++] = (side.PointC + (side.PointA - side.PointB)) * inchesInMeters;
 
 			mesh.vertices = vertices;
 
