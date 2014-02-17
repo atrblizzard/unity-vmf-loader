@@ -157,7 +157,7 @@ namespace UnityVMFLoader
 			}
 		}
 
-		public List<Node> children = new List<Node>();
+		private readonly List<Node> children = new List<Node>();
 
 		public Node Parent
 		{
@@ -237,6 +237,13 @@ namespace UnityVMFLoader
 		public Vector3 PointB;
 		public Vector3 PointC;
 
+		private static readonly Regex planeRegex;
+
+		static Side()
+		{
+			planeRegex = new Regex(@"(?:\((\-?\d+(?:.\S+)?) (\-?\d+(?:.\S+)?) (\-?\d+(?:.\S+)?)\) ?){3}", RegexOptions.Compiled);
+		}
+
 		public override void Parse(string key, string value)
 		{
 			base.Parse(key, value);
@@ -247,7 +254,7 @@ namespace UnityVMFLoader
 
 					// (-98.0334 356.145 -1.90735e-006) (-98.0334 356.145 0.999998) (-122 334.941 0.999998)
 
-					var match = new Regex(@"(?:\((\-?\d+(?:.\S+)?) (\-?\d+(?:.\S+)?) (\-?\d+(?:.\S+)?)\) ?){3}").Match(value);
+					var match = planeRegex.Match(value);
 
 					if (!match.Success)
 					{
@@ -298,13 +305,13 @@ namespace UnityVMFLoader
 
 		static public explicit operator Mesh(Side side)
 		{
-			Mesh mesh = new Mesh();
+			var mesh = new Mesh();
 
 			var vertices = new Vector3[4];
 
 			var vertex = 0;
 
-			var inchesInMeters = 0.0254f;
+			const float inchesInMeters = 0.0254f;
 
 			vertices[vertex++] = side.PointA * inchesInMeters;
 			vertices[vertex++] = side.PointB * inchesInMeters;
@@ -324,7 +331,7 @@ namespace UnityVMFLoader
 
 			mesh.RecalculateNormals();
 
-			mesh.triangles = new int[]
+			mesh.triangles = new[]
 			{
 				0, 1, 2,
 				2, 3, 0
