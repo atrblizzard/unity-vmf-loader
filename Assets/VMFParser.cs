@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
+using System;
 using System.IO;
 using System.Linq;
 using System.Collections;
+using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace UnityVMFLoader
 {
@@ -14,8 +17,6 @@ namespace UnityVMFLoader
 
 			var root = new Node();
 			var active = root;
-			
-			var keywriter = new StreamWriter(Path.Combine(Application.dataPath, "tree.txt"));
 			
 			foreach (var line in lines)
 			{
@@ -44,18 +45,8 @@ namespace UnityVMFLoader
 
 						var valueStart = line.IndexOf('"', keyEnd + 1);
 						var value = line.Substring(valueStart, line.Length - valueStart).Trim('"');
-						
-						keywriter.WriteLine("\"{0}\": \"{1}\"", key, value);
 
-						active.Children.Add
-						(
-							new Node
-							{
-								Key = key,
-								Value = value,
-								Parent = active
-							}
-						);
+						active.Parse(key, value);
 						
 						break;
 
@@ -63,21 +54,43 @@ namespace UnityVMFLoader
 
 						// Start of a new node.
 
-						keywriter.WriteLine("\n{0}:\n", line);
+						var parent = active;
 
-						active = new Node
+						switch (line)
 						{
-							Key = line,
-							Parent = active
-						};
+							case "world":
+
+								active = new World();
+
+								break;
+
+							case "solid":
+
+								active = new Solid();
+
+								break;
+
+							case "side":
+
+								active = new Side();
+
+								break;
+
+							default:
+
+								active = new Node();
+								
+								break;
+						}
+
+						active.Key = line;
+						active.Parent = parent;
 
 						break;
 				}
 			}
-			
-			keywriter.Close();
 
-			Debug.Log("Parsed VMF file " + path);
+			Debug.Log(String.Format("Parsed {0} solids.", root.Children.OfType<World>().First().Children.OfType<Solid>().Count()));
 			
 			return root;
 		}
@@ -86,9 +99,122 @@ namespace UnityVMFLoader
 	public class Node
 	{
 		public string Key;
-		public string Value;
 
-		public Node Parent;
-		public List<Node> Children = new List<Node>();
+		public ReadOnlyCollection<Node> Children
+		{
+			get
+			{
+				return children.AsReadOnly();
+			}
+		}
+
+		public List<Node> children = new List<Node>();
+
+		public Node Parent
+		{
+			get
+			{
+				return parent;
+			}
+
+			set
+			{
+				if (parent != null && value == null)
+				{
+					parent.children.Remove(this);
+				}
+
+				parent = value;
+
+				if (parent != null && value != null)
+				{
+					parent.children.Add(this);
+				}
+			}
+		}
+
+		private Node parent;
+
+		public virtual void Parse(string key, string value)
+		{
+
+		}
+	}
+
+	public class World : Node
+	{
+
+	}
+
+	public class Solid : Node
+	{
+		public uint id;
+
+		public override void Parse(string key, string value)
+		{
+			switch (key)
+			{
+				case "id":
+
+					id = Convert.ToUInt32(value);
+
+					break;
+			}
+		}
+	}
+
+	public class Side : Node
+	{
+		public uint id;
+		public Plane plane;
+
+		public override void Parse(string key, string value)
+		{
+			switch (key)
+			{
+				case "id":
+
+					id = Convert.ToUInt32(value);
+
+					break;
+
+				case "plane":
+
+					// (-98.0334 356.145 -1.90735e-006) (-98.0334 356.145 0.999998) (-122 334.941 0.999998)
+
+					var match = new Regex(@"(?:\((\-?\d+(?:.\S+)?) (\-?\d+(?:.\S+)?) (\-?\d+(?:.\S+)?)\) ?){3}").Match(value);
+
+					if (!match.Success)
+					{
+						throw new Exception("Failed to match a plane on side " + id + ".");
+					}
+
+					plane.Set3Points
+					(
+						new Vector3
+						(
+							float.Parse(match.Groups[1].Captures[0].Value),
+							float.Parse(match.Groups[2].Captures[0].Value),
+							float.Parse(match.Groups[3].Captures[0].Value)
+						),
+
+						new Vector3
+						(
+							float.Parse(match.Groups[1].Captures[1].Value),
+							float.Parse(match.Groups[2].Captures[1].Value),
+							float.Parse(match.Groups[3].Captures[1].Value)
+						),
+
+						new Vector3
+						(
+							float.Parse(match.Groups[1].Captures[2].Value),
+							float.Parse(match.Groups[2].Captures[2].Value),
+							float.Parse(match.Groups[3].Captures[2].Value)
+						)
+					);
+
+					break;
+			}
+		}
 	}
 }
