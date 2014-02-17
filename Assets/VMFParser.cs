@@ -64,6 +64,12 @@ namespace UnityVMFLoader
 
 								break;
 
+							case "entity":
+
+								active = new Entity();
+
+								break;
+
 							case "solid":
 
 								active = new Solid();
@@ -90,9 +96,14 @@ namespace UnityVMFLoader
 				}
 			}
 
-			Debug.Log(String.Format("Parsed {0} solids.", root.Children.OfType<World>().First().Children.OfType<Solid>().Count()));
+			var solids = root.Children.OfType<World>().First().Children.OfType<Solid>();
 
-			foreach (var solid in root.Children.OfType<World>().First().Children.OfType<Solid>())
+			foreach (var entity in root.Children.OfType<Entity>())
+			{
+				solids = solids.Concat(entity.Children.OfType<Solid>());
+			}
+
+			foreach (var solid in solids)
 			{
 				GameObject gameObject = new GameObject("Solid " + solid.Identifier);
 
@@ -173,22 +184,9 @@ namespace UnityVMFLoader
 
 		private Node parent;
 
-		public virtual void Parse(string key, string value)
-		{
-
-		}
-	}
-
-	public class World : Node
-	{
-
-	}
-
-	public class Solid : Node
-	{
 		public uint Identifier;
 
-		public override void Parse(string key, string value)
+		public virtual void Parse(string key, string value)
 		{
 			switch (key)
 			{
@@ -199,7 +197,20 @@ namespace UnityVMFLoader
 					break;
 			}
 		}
+	}
 
+	public class World : Node
+	{
+
+	}
+
+	public class Entity : Node
+	{
+
+	}
+
+	public class Solid : Node
+	{
 		static public explicit operator Mesh(Solid solid)
 		{
 			var mesh = new Mesh();
@@ -222,22 +233,16 @@ namespace UnityVMFLoader
 
 	public class Side : Node
 	{
-		public uint Identifier;
-
 		public Vector3 PointA;
 		public Vector3 PointB;
 		public Vector3 PointC;
 
 		public override void Parse(string key, string value)
 		{
+			base.Parse(key, value);
+
 			switch (key)
 			{
-				case "id":
-
-					Identifier = Convert.ToUInt32(value);
-
-					break;
-
 				case "plane":
 
 					// (-98.0334 356.145 -1.90735e-006) (-98.0334 356.145 0.999998) (-122 334.941 0.999998)
