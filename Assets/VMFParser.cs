@@ -17,15 +17,15 @@ namespace UnityVMFLoader
 
 			var root = new Node();
 			var active = root;
-			
+
 			foreach (var line in lines)
 			{
 				var firstCharacter = line[0];
-				
+
 				switch (firstCharacter)
 				{
 					case '{':
-						
+
 						break;
 
 					case '}':
@@ -47,7 +47,7 @@ namespace UnityVMFLoader
 						var value = line.Substring(valueStart, line.Length - valueStart).Trim('"');
 
 						active.Parse(key, value);
-						
+
 						break;
 
 					default:
@@ -79,7 +79,7 @@ namespace UnityVMFLoader
 							default:
 
 								active = new Node();
-								
+
 								break;
 						}
 
@@ -91,7 +91,14 @@ namespace UnityVMFLoader
 			}
 
 			Debug.Log(String.Format("Parsed {0} solids.", root.Children.OfType<World>().First().Children.OfType<Solid>().Count()));
-			
+
+			foreach (var solid in root.Children.OfType<World>().First().Children.OfType<Solid>())
+			{
+				GameObject gameObject = new GameObject("Solid " + solid.Identifier);
+
+				gameObject.AddComponent<MeshFilter>().mesh = (Mesh) solid;
+			}
+
 			return root;
 		}
 	}
@@ -148,7 +155,7 @@ namespace UnityVMFLoader
 
 	public class Solid : Node
 	{
-		public uint id;
+		public uint Identifier;
 
 		public override void Parse(string key, string value)
 		{
@@ -156,17 +163,39 @@ namespace UnityVMFLoader
 			{
 				case "id":
 
-					id = Convert.ToUInt32(value);
+					Identifier = Convert.ToUInt32(value);
 
 					break;
 			}
+		}
+
+		static public explicit operator Mesh(Solid solid)
+		{
+			var mesh = new Mesh();
+
+			var combines = new CombineInstance[solid.Children.OfType<Side>().Count()];
+
+			var i = 0;
+
+			foreach (var side in solid.Children.OfType<Side>())
+			{
+				combines[i++].mesh = (Mesh) side;
+			}
+
+			mesh.CombineMeshes(combines, true, false);
+			mesh.Optimize();
+
+			return mesh;
 		}
 	}
 
 	public class Side : Node
 	{
-		public uint id;
-		public Plane plane;
+		public uint Identifier;
+
+		public Vector3 PointA;
+		public Vector3 PointB;
+		public Vector3 PointC;
 
 		public override void Parse(string key, string value)
 		{
@@ -174,7 +203,7 @@ namespace UnityVMFLoader
 			{
 				case "id":
 
-					id = Convert.ToUInt32(value);
+					Identifier = Convert.ToUInt32(value);
 
 					break;
 
@@ -186,35 +215,58 @@ namespace UnityVMFLoader
 
 					if (!match.Success)
 					{
-						throw new Exception("Failed to match a plane on side " + id + ".");
+						throw new Exception("Failed to match a plane on side " + Identifier + ".");
 					}
 
-					plane.Set3Points
+					PointA = new Vector3
 					(
-						new Vector3
-						(
-							float.Parse(match.Groups[1].Captures[0].Value),
-							float.Parse(match.Groups[2].Captures[0].Value),
-							float.Parse(match.Groups[3].Captures[0].Value)
-						),
+						float.Parse(match.Groups[1].Captures[0].Value),
+						float.Parse(match.Groups[2].Captures[0].Value),
+						float.Parse(match.Groups[3].Captures[0].Value)
+					);
 
-						new Vector3
-						(
-							float.Parse(match.Groups[1].Captures[1].Value),
-							float.Parse(match.Groups[2].Captures[1].Value),
-							float.Parse(match.Groups[3].Captures[1].Value)
-						),
+					PointB = new Vector3
+					(
+						float.Parse(match.Groups[1].Captures[1].Value),
+						float.Parse(match.Groups[2].Captures[1].Value),
+						float.Parse(match.Groups[3].Captures[1].Value)
+					);
 
-						new Vector3
-						(
-							float.Parse(match.Groups[1].Captures[2].Value),
-							float.Parse(match.Groups[2].Captures[2].Value),
-							float.Parse(match.Groups[3].Captures[2].Value)
-						)
+					PointC = new Vector3
+					(
+						float.Parse(match.Groups[1].Captures[2].Value),
+						float.Parse(match.Groups[2].Captures[2].Value),
+						float.Parse(match.Groups[3].Captures[2].Value)
 					);
 
 					break;
 			}
+		}
+
+		static public explicit operator Mesh(Side side)
+		{
+			Mesh mesh = new Mesh();
+
+			var vertices = new Vector3[4];
+
+			var vertex = 0;
+
+			vertices[vertex++] = side.PointA;
+			vertices[vertex++] = side.PointB;
+			vertices[vertex++] = side.PointC;
+			vertices[vertex++] = side.PointC + (side.PointA - side.PointB);
+
+			mesh.vertices = vertices;
+
+			mesh.RecalculateNormals();
+
+			mesh.triangles = new int[]
+			{
+				0, 1, 2,
+				2, 3, 0
+			};
+
+			return mesh;
 		}
 	}
 }
