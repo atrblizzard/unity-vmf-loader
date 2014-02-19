@@ -5,6 +5,7 @@
 *.pidb
 *.resharper
 *.sln
+*.sublime-workspace
 *.suo
 *.unityproj
 *.user
