@@ -89,7 +89,7 @@ namespace UnityVMFLoader
 			{
 				GameObject gameObject = new GameObject("Solid " + solid.Identifier);
 
-				gameObject.AddComponent<MeshRenderer>();
+				gameObject.AddComponent<UnityEngine.MeshRenderer>();
 				gameObject.AddComponent<MeshFilter>();
 
 				gameObject.GetComponent<MeshFilter>().sharedMesh = (Mesh) solid;
