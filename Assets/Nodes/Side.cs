@@ -189,7 +189,7 @@ namespace UnityVMFLoader.Nodes
 
 			// Transform the 3D polygon to a 2D polygon so that it can be triangulated.
 
-			var center = intersections.Aggregate((accumulator, current) => accumulator + current) / intersections.Count;
+			var center = intersections.Average();
 
 			var angle = Vector3.Angle(Vector3.forward, side.Plane.normal);
 			var axis = Vector3.Cross(side.Plane.normal.normalized, Vector3.forward);
@@ -229,7 +229,7 @@ namespace UnityVMFLoader.Nodes
 
 			// Flip it if it's facing the wrong way.
 
-			center = sides.Select(x => x.Center).Aggregate((accumulator, current) => accumulator + current) / sides.Count();
+			center = sides.Average(x => x.Center);
 
 			var direction = (side.Center - center).normalized;
 

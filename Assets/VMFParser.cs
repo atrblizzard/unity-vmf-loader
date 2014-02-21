@@ -98,14 +98,7 @@ namespace UnityVMFLoader
 
 				// The vertices of the mesh are in world coordinates so we'll need to center them.
 
-				var center = new Vector3();
-
-				foreach (var vertex in mesh.vertices)
-				{
-					center += vertex;
-				}
-
-				center /= mesh.vertices.Count();
+				var center = mesh.vertices.Average();
 
 				var vertices = mesh.vertices;
 
