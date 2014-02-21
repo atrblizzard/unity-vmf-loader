@@ -20,6 +20,8 @@ namespace UnityVMFLoader.Nodes
 		public Vector3 PointB;
 		public Vector3 PointC;
 
+		public Vector3 Center;
+
 		private const float inchesInMeters = 0.0254f;
 
 		private static readonly Regex planeRegex;
@@ -97,6 +99,8 @@ namespace UnityVMFLoader.Nodes
 
 					Plane = new Plane(PointA, PointB, PointC);
 
+					Center = (PointA + PointB + PointC) / 3;
+
 					break;
 			}
 		}
@@ -138,8 +142,6 @@ namespace UnityVMFLoader.Nodes
 
 			// Discard points that can't be reached by a line from the center to the point.
 
-			var center = (side.PointA + side.PointB + side.PointC) / 3;
-
 			var newIntersections = new List<Vector3>();
 
 			foreach (var point in intersections)
@@ -148,13 +150,13 @@ namespace UnityVMFLoader.Nodes
 				(
 					x =>
 					{
-						var ray = new Ray(center, (point - center).normalized);
+						var ray = new Ray(side.Center, (point - side.Center).normalized);
 
 						float distanceTravelled;
 
 						var hit = x.Plane.Raycast(ray, out distanceTravelled);
 
-						return hit && distanceTravelled < Vector3.Distance(center, point) - 0.01f;
+						return hit && distanceTravelled < Vector3.Distance(side.Center, point) - 0.01f;
 					}
 				);
 
@@ -187,7 +189,7 @@ namespace UnityVMFLoader.Nodes
 
 			// Transform the 3D polygon to a 2D polygon so that it can be triangulated.
 
-			center = intersections.Aggregate((accumulator, current) => accumulator + current) / intersections.Count;
+			var center = intersections.Aggregate((accumulator, current) => accumulator + current) / intersections.Count;
 
 			var angle = Vector3.Angle(Vector3.forward, side.Plane.normal);
 			var axis = Vector3.Cross(side.Plane.normal.normalized, Vector3.forward);
@@ -224,6 +226,19 @@ namespace UnityVMFLoader.Nodes
 
 			mesh.RecalculateNormals();
 			mesh.RecalculateBounds();
+
+			// Flip it if it's facing the wrong way.
+
+			center = sides.Select(x => x.Center).Aggregate((accumulator, current) => accumulator + current) / sides.Count();
+
+			var direction = (side.Center - center).normalized;
+
+			if (Vector3.Dot(mesh.normals[0], direction) < 0)
+			{
+				mesh.triangles = mesh.triangles.Reverse().ToArray();
+
+				mesh.RecalculateNormals();
+			}
 
 			return mesh;
 		}
