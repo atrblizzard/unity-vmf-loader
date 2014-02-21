@@ -4,7 +4,7 @@
 		{
 			"path": "/",
 			"folder_exclude_patterns": ["Library", "ProjectSettings", "Temp"],
-			"file_exclude_patterns": ["*.meta"]
+			"file_exclude_patterns": ["*.meta", "*.DotSettings.user", "*.[Rr]e[Ss]harper", "*.booproj", "*.csproj", "*.pidb", "*.resharper", "*.sln", "*.sublime-workspace", "*.suo", "*.unityproj", "*.user", "*.userprefs", ".DS_Store", "[Ll]ibrary/", "[Oo]bj/", "[Tt]emp/", "_ReSharper*/"]
 		}
 	]
 }
