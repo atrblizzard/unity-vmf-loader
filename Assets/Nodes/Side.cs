@@ -109,9 +109,9 @@ namespace UnityVMFLoader.Nodes
 		{
 			// Calculate the intersection points of this plane with the other planes in this solid.
 
-			var solid = (Solid) side.Parent;
-
 			var intersections = new List<Vector3>();
+
+			var solid = (Solid) side.Parent;
 
 			var sides = solid.Children.OfType<Side>();
 
@@ -119,11 +119,6 @@ namespace UnityVMFLoader.Nodes
 			{
 				foreach (var side3 in sides)
 				{
-					if (side2 == side || side3 == side || side2 == side3)
-					{
-						continue;
-					}
-
 					var intersection = GetPlaneIntersectionPoint(side.Plane, side2.Plane, side3.Plane);
 
 					if (intersection == null)
@@ -131,7 +126,7 @@ namespace UnityVMFLoader.Nodes
 						continue;
 					}
 
-					if (((Vector3) intersection).magnitude > 16384)
+					if (intersections.Contains((Vector3) intersection, new Vector3NearEqualComparer()))
 					{
 						continue;
 					}
@@ -156,6 +151,8 @@ namespace UnityVMFLoader.Nodes
 
 						var hit = x.Plane.Raycast(ray, out distanceTravelled);
 
+						// Did it hit something before reaching its destination?
+
 						return hit && distanceTravelled < Vector3.Distance(side.Center, point) - 0.01f;
 					}
 				);
@@ -178,7 +175,7 @@ namespace UnityVMFLoader.Nodes
 
 			intersections = intersections.Distinct(new Vector3NearEqualComparer()).ToList();
 
-			// Ignore the side if it's broke.
+			// Ignore the side if it's broken.
 
 			if (intersections.Count() < 3)
 			{
@@ -189,12 +186,10 @@ namespace UnityVMFLoader.Nodes
 
 			// Transform the 3D polygon to a 2D polygon so that it can be triangulated.
 
-			var center = intersections.Average();
-
 			var angle = Vector3.Angle(Vector3.forward, side.Plane.normal);
 			var axis = Vector3.Cross(side.Plane.normal.normalized, Vector3.forward);
 
-			var intersections2D = intersections.Select(point => Quaternion.AngleAxis(angle, axis) * (point - center)).ToList();
+			var intersections2D = intersections.Select(point => Quaternion.AngleAxis(angle, axis) * (point - side.Center)).ToList();
 
 			// Triangulate the polygon.
 
@@ -214,7 +209,7 @@ namespace UnityVMFLoader.Nodes
 
 			// Transform the triangulated polygon back to 3D.
 
-			intersections = intersections2D.Select(point => Quaternion.AngleAxis(-angle, axis) * point + center).ToList();
+			intersections = intersections2D.Select(point => Quaternion.AngleAxis(-angle, axis) * point + side.Center).ToList();
 
 			// Create a mesh for it.
 
@@ -229,7 +224,7 @@ namespace UnityVMFLoader.Nodes
 
 			// Flip it if it's facing the wrong way.
 
-			center = sides.Average(x => x.Center);
+			var center = sides.Average(x => x.Center);
 
 			var direction = (side.Center - center).normalized;
 
@@ -284,7 +279,7 @@ namespace UnityVMFLoader.Nodes
 				return null;
 			}
 
-			return
+			var point =
 			(
 				Vector3.Cross(plane2.normal, plane3.normal) * -plane1.distance +
 				Vector3.Cross(plane3.normal, plane1.normal) * -plane2.distance +
@@ -294,6 +289,13 @@ namespace UnityVMFLoader.Nodes
 			/
 
 			determinant;
+
+			if (point.magnitude > 450)
+			{
+				return null;
+			}
+
+			return point;
 		}
 	}
 }

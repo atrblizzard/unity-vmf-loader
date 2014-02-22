@@ -14,12 +14,12 @@ namespace UnityVMFLoader
 
 			return average;
 		}
-		
+
 		public static Vector3 Average<TSource>(this IEnumerable<TSource> source, Func<TSource, Vector3> selector)
 		{
 			var sum = source.Sum(selector);
 			var average = sum / source.Count();
-			
+
 			return average;
 		}
 
@@ -38,7 +38,7 @@ namespace UnityVMFLoader
 		public static Vector3 Sum(this IEnumerable<Vector3> source)
 		{
 			var sum = Vector3.zero;
-			
+
 			foreach(var vector in source)
 			{
 				sum += vector;
