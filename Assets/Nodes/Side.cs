@@ -44,7 +44,7 @@ namespace UnityVMFLoader.Nodes
 		{
 			// (-98.0334 356.145 -1.90735e-006) (-98.0334 356.145 0.999998) (-122 334.941 0.999998)
 
-			planeRegex = new Regex(@"(?:\((\-?\d+(?:.\S+)?) (\-?\d+(?:.\S+)?) (\-?\d+(?:.\S+)?)\) ?){3}", RegexOptions.Compiled);
+			planeRegex = new Regex(@"\((.+?) (.+?) (.+?)\) \((.+?) (.+?) (.+?)\) \((.+?) (.+?) (.+?)\)", RegexOptions.Compiled);
 
 			// [0 -1 0 384] 0.25
 
@@ -70,23 +70,23 @@ namespace UnityVMFLoader.Nodes
 
 					PointA = new Vector3
 					(
-						float.Parse(match.Groups[1].Captures[0].Value),
-						float.Parse(match.Groups[2].Captures[0].Value),
-						float.Parse(match.Groups[3].Captures[0].Value)
+						float.Parse(match.Groups[1].Value),
+						float.Parse(match.Groups[2].Value),
+						float.Parse(match.Groups[3].Value)
 					);
 
 					PointB = new Vector3
 					(
-						float.Parse(match.Groups[1].Captures[1].Value),
-						float.Parse(match.Groups[2].Captures[1].Value),
-						float.Parse(match.Groups[3].Captures[1].Value)
+						float.Parse(match.Groups[4].Value),
+						float.Parse(match.Groups[5].Value),
+						float.Parse(match.Groups[6].Value)
 					);
 
 					PointC = new Vector3
 					(
-						float.Parse(match.Groups[1].Captures[2].Value),
-						float.Parse(match.Groups[2].Captures[2].Value),
-						float.Parse(match.Groups[3].Captures[2].Value)
+						float.Parse(match.Groups[7].Value),
+						float.Parse(match.Groups[8].Value),
+						float.Parse(match.Groups[9].Value)
 					);
 
 					if (PointA.magnitude > 16384 || PointB.magnitude > 16384 || PointC.magnitude > 16384)
