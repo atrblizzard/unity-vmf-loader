@@ -122,6 +122,12 @@ namespace UnityVMFLoader
 
 				gameObject.transform.position = center;
 
+				// Add a MeshCollider.
+
+				var collider = gameObject.AddComponent<MeshCollider>();
+
+				collider.convex = true;
+
 				// If the solid is in a group, move it there.
 
 				var editor = solid.Parent.Children.OfType<Nodes.Editor>().FirstOrDefault();
