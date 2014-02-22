@@ -23,15 +23,11 @@ namespace UnityVMFLoader.Nodes
 
 		public Vector3 Center;
 
-		public float UAxisX;
-		public float UAxisY;
-		public float UAxisZ;
+		public Vector3 UAxis;
 		public float UAxisTranslation;
 		public float UAxisScale;
 
-		public float VAxisX;
-		public float VAxisY;
-		public float VAxisZ;
+		public Vector3 VAxis;
 		public float VAxisTranslation;
 		public float VAxisScale;
 
@@ -127,11 +123,15 @@ namespace UnityVMFLoader.Nodes
 
 					match = uvRegex.Match(value);
 
-					UAxisX = float.Parse(match.Groups[1].Value);
-					UAxisY = float.Parse(match.Groups[2].Value);
-					UAxisZ = float.Parse(match.Groups[3].Value);
+					UAxis = new Vector3
+					(
+						float.Parse(match.Groups[1].Value),
+						float.Parse(match.Groups[3].Value),
+						float.Parse(match.Groups[2].Value)
+					);
+
 					UAxisTranslation = float.Parse(match.Groups[4].Value);
-					UAxisScale = float.Parse(match.Groups[5].Value);
+					UAxisScale = float.Parse(match.Groups[5].Value) * inchesInMeters;
 
 					break;
 
@@ -139,11 +139,15 @@ namespace UnityVMFLoader.Nodes
 
 					match = uvRegex.Match(value);
 
-					VAxisX = float.Parse(match.Groups[1].Value);
-					VAxisY = float.Parse(match.Groups[2].Value);
-					VAxisZ = float.Parse(match.Groups[3].Value);
+					VAxis = new Vector3
+					(
+						float.Parse(match.Groups[1].Value),
+						float.Parse(match.Groups[3].Value),
+						float.Parse(match.Groups[2].Value)
+					);
+
 					VAxisTranslation = float.Parse(match.Groups[4].Value);
-					VAxisScale = float.Parse(match.Groups[5].Value);
+					VAxisScale = float.Parse(match.Groups[5].Value) * inchesInMeters;
 
 					break;
 			}
@@ -257,9 +261,17 @@ namespace UnityVMFLoader.Nodes
 
 			var i = 0;
 
-			foreach (var point in intersections2D)
+			foreach (var point in intersections)
 			{
-				textureCoordinates[i] = new Vector2(point.x, point.y);
+				// HACK: Hardcoded for now, fetch them later when we have proper texturing support.
+
+				const float texWidth = 128;
+				const float texHeight = 128;
+
+				var u = ((Vector3.Dot(point, side.UAxis) / (texWidth * side.UAxisScale)) + (side.UAxisTranslation / texWidth));
+				var v = ((Vector3.Dot(point, side.VAxis) / (texHeight * side.VAxisScale)) + (side.VAxisTranslation / texHeight));
+
+				textureCoordinates[i] = new Vector2(u, v);
 
 				i++;
 			}
