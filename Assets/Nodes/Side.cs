@@ -23,26 +23,45 @@ namespace UnityVMFLoader.Nodes
 
 		public Vector3 Center;
 
+		public float UAxisX;
+		public float UAxisY;
+		public float UAxisZ;
+		public float UAxisTranslation;
+		public float UAxisScale;
+
+		public float VAxisX;
+		public float VAxisY;
+		public float VAxisZ;
+		public float VAxisTranslation;
+		public float VAxisScale;
+
 		private const float inchesInMeters = 0.0254f;
 
 		private static readonly Regex planeRegex;
+		private static readonly Regex uvRegex;
 
 		static Side()
 		{
+			// (-98.0334 356.145 -1.90735e-006) (-98.0334 356.145 0.999998) (-122 334.941 0.999998)
+
 			planeRegex = new Regex(@"(?:\((\-?\d+(?:.\S+)?) (\-?\d+(?:.\S+)?) (\-?\d+(?:.\S+)?)\) ?){3}", RegexOptions.Compiled);
+
+			// [0 -1 0 384] 0.25
+
+			uvRegex = new Regex(@"\[(.+?) (.+?) (.+?) (.+?)\] (.+)", RegexOptions.Compiled);
 		}
 
 		public override void Parse(string key, string value)
 		{
 			base.Parse(key, value);
 
+			Match match;
+
 			switch (key)
 			{
 				case "plane":
 
-					// (-98.0334 356.145 -1.90735e-006) (-98.0334 356.145 0.999998) (-122 334.941 0.999998)
-
-					var match = planeRegex.Match(value);
+					match = planeRegex.Match(value);
 
 					if (!match.Success)
 					{
@@ -101,6 +120,30 @@ namespace UnityVMFLoader.Nodes
 					Plane = new Plane(PointA, PointB, PointC);
 
 					Center = (PointA + PointB + PointC) / 3;
+
+					break;
+
+				case "uaxis":
+
+					match = uvRegex.Match(value);
+
+					UAxisX = float.Parse(match.Groups[1].Value);
+					UAxisY = float.Parse(match.Groups[2].Value);
+					UAxisZ = float.Parse(match.Groups[3].Value);
+					UAxisTranslation = float.Parse(match.Groups[4].Value);
+					UAxisScale = float.Parse(match.Groups[5].Value);
+
+					break;
+
+				case "vaxis":
+
+					match = uvRegex.Match(value);
+
+					VAxisX = float.Parse(match.Groups[1].Value);
+					VAxisY = float.Parse(match.Groups[2].Value);
+					VAxisZ = float.Parse(match.Groups[3].Value);
+					VAxisTranslation = float.Parse(match.Groups[4].Value);
+					VAxisScale = float.Parse(match.Groups[5].Value);
 
 					break;
 			}
