@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEditor;
 using TriangleNet;
 using System;
 using System.IO;
@@ -207,6 +208,19 @@ namespace UnityVMFLoader.Nodes
 
 			intersections2D = output.Vertices.Select(vertex => new Vector3((float) vertex.X, (float) vertex.Y, 0)).ToList();
 
+			// Calculate texture coordinates.
+
+			var textureCoordinates = new Vector2[output.Vertices.Count()];
+
+			var i = 0;
+
+			foreach (var point in intersections2D)
+			{
+				textureCoordinates[i] = new Vector2(point.x, point.y);
+
+				i++;
+			}
+
 			// Transform the triangulated polygon back to 3D.
 
 			intersections = intersections2D.Select(point => Quaternion.AngleAxis(-angle, axis) * point + side.Center).ToList();
@@ -217,7 +231,9 @@ namespace UnityVMFLoader.Nodes
 
 			mesh.vertices = intersections.ToArray();
 			mesh.triangles = renderableOutput.Triangles.Select(x => (int) x).ToArray();
-			mesh.uv = new Vector2[mesh.vertices.Length];
+			mesh.uv = textureCoordinates;
+
+			Unwrapping.GenerateSecondaryUVSet(mesh);
 
 			mesh.RecalculateNormals();
 			mesh.RecalculateBounds();
