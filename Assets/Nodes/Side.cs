@@ -146,7 +146,7 @@ namespace UnityVMFLoader.Nodes
 
 			foreach (var point in intersections)
 			{
-				var discard = sides.Any
+				var discard = sides.Except(new [] {side}).Any
 				(
 					x =>
 					{
