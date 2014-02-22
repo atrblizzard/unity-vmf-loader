@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEditor;
 using System;
 using System.IO;
 using System.Linq;
@@ -94,9 +95,15 @@ namespace UnityVMFLoader
 
 				gameObject.GetComponent<MeshFilter>().sharedMesh = (Mesh) solid;
 
-				var mesh = gameObject.GetComponent<MeshFilter>().sharedMesh;
+				// Assign the placeholder material.
+
+				var material = (Material) AssetDatabase.LoadAssetAtPath("Assets/dev_measuregeneric01b.mat", typeof(Material));
+
+				gameObject.GetComponent<UnityEngine.MeshRenderer>().material = material;
 
 				// The vertices of the mesh are in world coordinates so we'll need to center them.
+
+				var mesh = gameObject.GetComponent<MeshFilter>().sharedMesh;
 
 				var center = mesh.vertices.Average();
 
