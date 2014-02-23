@@ -7,6 +7,8 @@ namespace UnityVMFLoader
 {
 	public static class Utils
 	{
+		private const float InchesInMeters = 0.0254f;
+
 		public static Vector3 Average(this IEnumerable<Vector3> source)
 		{
 			var sum = source.Sum();
@@ -45,6 +47,11 @@ namespace UnityVMFLoader
 			}
 
 			return sum;
+		}
+
+		public static Vector3 SourceToUnity(this Vector3 vec)
+		{
+			return new Vector3(vec.x * InchesInMeters, vec.z * InchesInMeters, vec.y * InchesInMeters);
 		}
 	}
 }
