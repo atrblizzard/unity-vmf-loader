@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEditor;
 using TriangleNet;
 using System;
 using System.IO;
@@ -295,8 +294,6 @@ namespace UnityVMFLoader.Nodes
 			mesh.vertices = intersections.ToArray();
 			mesh.triangles = renderableOutput.Triangles.Select(x => (int) x).ToArray();
 			mesh.uv = textureCoordinates;
-
-			Unwrapping.GenerateSecondaryUVSet(mesh);
 
 			mesh.RecalculateNormals();
 			mesh.RecalculateBounds();

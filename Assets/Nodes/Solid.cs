@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEditor;
 using System;
 using System.IO;
 using System.Linq;
@@ -26,6 +27,8 @@ namespace UnityVMFLoader.Nodes
 
 			mesh.CombineMeshes(combines, true, false);
 			mesh.Optimize();
+
+			Unwrapping.GenerateSecondaryUVSet(mesh);
 
 			return mesh;
 		}
