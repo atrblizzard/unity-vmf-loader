@@ -12,6 +12,35 @@ namespace UnityVMFLoader
 {
 	public static class VMFParser
 	{
+		private static readonly Queue<ParserTask> taskQueue;
+		private static readonly List<ParserTask> doneTasks;
+
+		static VMFParser()
+		{
+			taskQueue = new Queue<ParserTask>();
+			doneTasks = new List<ParserTask>();
+		}
+
+		public static void AddTask<T>() where T : ParserTask
+		{
+			taskQueue.Enqueue(Activator.CreateInstance<T>());
+		}
+
+		public static ParserTask GetTask<T>() where T : ParserTask
+		{
+			return doneTasks.FirstOrDefault(task => task.GetType() == typeof (T));
+		}
+
+		public static bool TaskDone<T>() where T : ParserTask
+		{
+			return TaskDone(typeof (T));
+		}
+
+		public static bool TaskDone(Type type)
+		{
+			return doneTasks.Any(task => task.GetType() == type);
+		}
+
 		public static Nodes.Node Parse(string path)
 		{
 			var lines = File.ReadAllLines(path).Select(s => s.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToList();
