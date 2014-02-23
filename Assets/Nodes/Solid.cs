@@ -28,7 +28,10 @@ namespace UnityVMFLoader.Nodes
 			mesh.CombineMeshes(combines, true, false);
 			mesh.Optimize();
 
-			Unwrapping.GenerateSecondaryUVSet(mesh);
+			if (Settings.GenerateLightmapUVs)
+			{
+				Unwrapping.GenerateSecondaryUVSet(mesh);
+			}
 
 			return mesh;
 		}

@@ -77,72 +77,88 @@ namespace UnityVMFLoader
 				groups[group] = new GameObject("Group " + group.Identifier);
 			}
 
-			// Create solids from the parsed tree.
-
-			var solids = root.Children.OfType<Nodes.World>().First().Children.OfType<Nodes.Solid>();
-
-			foreach (var entity in root.Children.OfType<Nodes.Entity>())
+			if (Settings.ImportBrushes)
 			{
-				solids = solids.Concat(entity.Children.OfType<Nodes.Solid>());
-			}
+				// Create solids from the parsed tree.
 
-			foreach (var solid in solids)
-			{
-				GameObject gameObject = new GameObject("Solid " + solid.Identifier);
+				IEnumerable<Nodes.Solid> solids = null;
 
-				gameObject.AddComponent<UnityEngine.MeshRenderer>();
-				gameObject.AddComponent<MeshFilter>();
-
-				gameObject.GetComponent<MeshFilter>().sharedMesh = (Mesh) solid;
-
-				// Assign the placeholder material.
-
-				var material = (Material) AssetDatabase.LoadAssetAtPath("Assets/dev_measuregeneric01b.mat", typeof(Material));
-
-				gameObject.GetComponent<UnityEngine.MeshRenderer>().material = material;
-
-				// The vertices of the mesh are in world coordinates so we'll need to center them.
-
-				var mesh = gameObject.GetComponent<MeshFilter>().sharedMesh;
-
-				var center = mesh.vertices.Average();
-
-				var vertices = mesh.vertices;
-
-				for (var vertex = 0; vertex < vertices.Count(); vertex++)
+				if (Settings.ImportWorldBrushes)
 				{
-					vertices[vertex] -= center;
+					solids = root.Children.OfType<Nodes.World>().First().Children.OfType<Nodes.Solid>();
 				}
 
-				mesh.vertices = vertices;
-
-				mesh.RecalculateBounds();
-
-				// And move the object itself to those world coordinates.
-
-				gameObject.transform.position = center;
-
-				// In order to make lightmap baking work, make object static.
-
-				gameObject.isStatic = true;
-
-				// Add a MeshCollider.
-
-				var collider = gameObject.AddComponent<MeshCollider>();
-
-				collider.convex = true;
-
-				// If the solid is in a group, move it there.
-
-				var editor = solid.Parent.Children.OfType<Nodes.Editor>().FirstOrDefault();
-
-				if (editor != null)
+				if (Settings.ImportDetailBrushes)
 				{
-					var pair = groups.FirstOrDefault(x => x.Key.Identifier == editor.GroupIdentifier);
-
-					if (pair.Value != null)
+					foreach (var entity in root.Children.OfType<Nodes.Entity>())
 					{
-						gameObject.transform.parent = pair.Value.transform;
+						var entities = entity.Children.OfType<Nodes.Solid>();
+
+						solids = solids == null ? entities : solids.Concat(entities);
+					}
+				}
+
+				if (solids != null)
+				{
+					foreach (var solid in solids)
+					{
+						GameObject gameObject = new GameObject("Solid " + solid.Identifier);
+
+						gameObject.AddComponent<UnityEngine.MeshRenderer>();
+						gameObject.AddComponent<MeshFilter>();
+
+						gameObject.GetComponent<MeshFilter>().sharedMesh = (Mesh) solid;
+
+						// Assign the placeholder material.
+
+						var material = (Material) AssetDatabase.LoadAssetAtPath("Assets/dev_measuregeneric01b.mat", typeof(Material));
+
+						gameObject.GetComponent<UnityEngine.MeshRenderer>().material = material;
+
+						// The vertices of the mesh are in world coordinates so we'll need to center them.
+
+						var mesh = gameObject.GetComponent<MeshFilter>().sharedMesh;
+
+						var center = mesh.vertices.Average();
+
+						var vertices = mesh.vertices;
+
+						for (var vertex = 0; vertex < vertices.Count(); vertex++)
+						{
+							vertices[vertex] -= center;
+						}
+
+						mesh.vertices = vertices;
+
+						mesh.RecalculateBounds();
+
+						// And move the object itself to those world coordinates.
+
+						gameObject.transform.position = center;
+
+						// In order to make lightmap baking work, make object static.
+
+						gameObject.isStatic = true;
+
+						// Add a MeshCollider.
+
+						var collider = gameObject.AddComponent<MeshCollider>();
+
+						collider.convex = true;
+
+						// If the solid is in a group, move it there.
+
+						var editor = solid.Parent.Children.OfType<Nodes.Editor>().FirstOrDefault();
+
+						if (editor != null)
+						{
+							var pair = groups.FirstOrDefault(x => x.Key.Identifier == editor.GroupIdentifier);
+
+							if (pair.Value != null)
+							{
+								gameObject.transform.parent = pair.Value.transform;
+							}
+						}
 					}
 				}
 			}
