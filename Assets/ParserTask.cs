@@ -24,17 +24,26 @@ namespace UnityVMFLoader
 		{
 			Dependencies = new Dictionary<Type, List<Type>>();
 
+			// Get all Types with ParserTask as the base type.
+
 			var taskTypes = Assembly.GetCallingAssembly().GetTypes().Where(type => type.BaseType == typeof (ParserTask));
 
 			foreach (var taskType in taskTypes)
 			{
-				var attributes = Attribute.GetCustomAttributes(taskType).Where(attribute => attribute.GetType() == typeof(DependsOnTaskAttribute)).Cast<DependsOnTaskAttribute>();
-				Dependencies[taskType] = new List<Type>();
+				// Find the first (and the only) DependsOnTaskAttribute of the type.
 
-				foreach (var dependency in attributes)
+				var attributes = Attribute.GetCustomAttributes(taskType);
+
+				var dependencyAttribute = attributes.Where(attribute => attribute.GetType() == typeof(DependsOnTaskAttribute)).Cast<DependsOnTaskAttribute>().FirstOrDefault();
+
+				// If there are no dependencies, move over to the next ParserTask type.
+
+				if(dependencyAttribute == null)
 				{
-					Dependencies[taskType].Add(dependency.RequiredTaskType);
+					continue;
 				}
+
+				Dependencies[taskType] = dependencyAttribute.RequiredTasks.ToList();
 			}
 		}
 	}

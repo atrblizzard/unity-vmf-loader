@@ -5,11 +5,11 @@ namespace UnityVMFLoader
 	[AttributeUsage(AttributeTargets.Class)]
 	public class DependsOnTaskAttribute : Attribute
 	{
-		public Type RequiredTaskType;
+		public Type[] RequiredTasks;
 
-		public DependsOnTaskAttribute(Type taskType)
+		public DependsOnTaskAttribute(params Type[] tasks)
 		{
-			RequiredTaskType = taskType;
+			RequiredTasks = tasks;
 		}
 	}
 }
