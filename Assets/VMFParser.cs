@@ -171,10 +171,10 @@ namespace UnityVMFLoader
 
 			foreach (var light in lights)
 			{
-				var lightProperties = light["_light"].Split(' ');
+				var lightProperties = Regex.Replace(light["_light"], @"\s+", " ").Split(' ');
 
 				var color = lightProperties.Take(3).Select(v => float.Parse(v) / 255f).ToArray();
-				var brightness = int.Parse(lightProperties[3]) / sourceToUnityBrightnessDivisor;
+				var brightness = float.Parse(lightProperties[3]) / sourceToUnityBrightnessDivisor;
 
 				var lightObject = new GameObject("Light " + light.Identifier);
 
