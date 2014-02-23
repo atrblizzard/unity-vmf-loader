@@ -2,6 +2,7 @@
 using UnityEditor;
 using System.IO;
 using System.Linq;
+using UnityVMFLoader.Tasks;
 
 namespace UnityVMFLoader
 {
@@ -18,7 +19,36 @@ namespace UnityVMFLoader
 			{
 				try
 				{
-					VMFParser.Parse(Path.Combine(Directory.GetParent(Application.dataPath).FullName, asset));
+					Importer.AddTask<ParseNodesTask>();
+					Importer.AddTask<GroupNodesTask>();
+
+					if(Settings.ImportBrushes)
+					{
+						Importer.AddTask<ImportBrushesTask>();
+					}
+
+					if(Settings.ImportWorldBrushes)
+					{
+						Importer.AddTask<ImportWorldBrushesTask>();
+					}
+
+					if(Settings.ImportDetailBrushes)
+					{
+						Importer.AddTask<ImportDetailBrushesTask>();
+					}
+
+					if(Settings.ImportWorldBrushes || Settings.ImportDetailBrushes)
+					{
+						Importer.AddTask<CreateBrushObjectsTask>();
+						Importer.AddTask<DestorySingleItemGroupsTask>();
+					}
+
+					if (Settings.ImportLights)
+					{
+						Importer.AddTask<ImportLightsTask>();
+					}
+
+					Importer.Import(Path.Combine(Directory.GetParent(Application.dataPath).FullName, asset));
 				}
 				finally
 				{

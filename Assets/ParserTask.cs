@@ -2,21 +2,30 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using UnityVMFLoader.Nodes;
 
 namespace UnityVMFLoader
 {
 	public abstract class ParserTask
 	{
-		public abstract void Run();
+		public virtual void Run()
+		{
+			Done = true;
+		}
 
 		public bool CanRun
 		{
 			get
 			{
-				return Dependencies[GetType()].All(VMFParser.TaskDone);
+				if(!Dependencies.ContainsKey(GetType()))
+				{
+					return true;
+				}
+
+				return Dependencies[GetType()].All(Importer.TaskDone);
 			}
 		}
+
+		public bool Done;
 
 		protected static readonly Dictionary<Type, List<Type>> Dependencies;
 
@@ -34,7 +43,7 @@ namespace UnityVMFLoader
 
 				var attributes = Attribute.GetCustomAttributes(taskType);
 
-				var dependencyAttribute = attributes.Where(attribute => attribute.GetType() == typeof(DependsOnTaskAttribute)).Cast<DependsOnTaskAttribute>().FirstOrDefault();
+				var dependencyAttribute = attributes.OfType<DependsOnTaskAttribute>().FirstOrDefault();
 
 				// If there are no dependencies, move over to the next ParserTask type.
 
