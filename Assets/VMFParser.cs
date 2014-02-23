@@ -122,6 +122,10 @@ namespace UnityVMFLoader
 
 				gameObject.transform.position = center;
 
+				// In order to make lightmap baking work, make object static.
+
+				gameObject.isStatic = true;
+
 				// Add a MeshCollider.
 
 				var collider = gameObject.AddComponent<MeshCollider>();
