@@ -31,6 +31,8 @@ namespace UnityVMFLoader.Nodes
 		public float VAxisTranslation;
 		public float VAxisScale;
 
+		public float Rotation;
+
 		private const float inchesInMeters = 0.0254f;
 
 		private static readonly Regex planeRegex;
@@ -148,6 +150,12 @@ namespace UnityVMFLoader.Nodes
 
 					VAxisTranslation = float.Parse(match.Groups[4].Value);
 					VAxisScale = float.Parse(match.Groups[5].Value) * inchesInMeters;
+
+					break;
+
+				case "rotation":
+
+					Rotation = float.Parse(value);
 
 					break;
 			}
