@@ -163,6 +163,47 @@ namespace UnityVMFLoader
 				}
 			}
 
+			// Create lights.
+
+			var lights = root.Children.OfType<Nodes.Entity>().Where(entity => entity.ClassName.StartsWith("light")).ToList();
+
+			const float sourceToUnityBrightnessDivisor = 200;
+
+			foreach (var light in lights)
+			{
+				var lightProperties = light["_light"].Split(' ');
+
+				var color = lightProperties.Take(3).Select(v => float.Parse(v) / 255f).ToArray();
+				var brightness = int.Parse(lightProperties[3]) / sourceToUnityBrightnessDivisor;
+
+				var lightObject = new GameObject("Light " + light.Identifier);
+
+				lightObject.transform.position = light.Origin;
+				lightObject.transform.rotation = light.Angles;
+
+				var lightComponent = lightObject.AddComponent<Light>();
+
+				lightComponent.intensity = brightness;
+				lightComponent.color = new Color(color[0], color[1], color[2]);
+				lightComponent.range = 25.0f;
+
+				switch (light.ClassName)
+				{
+					case "light":
+
+						lightComponent.type = LightType.Point;
+
+						break;
+
+					case "light_spot":
+
+						lightComponent.type = LightType.Spot;
+						lightComponent.spotAngle = int.Parse(light["_cone"]);;
+
+						break;
+				}
+			}
+
 			// Destroy the GameObjects of groups with a single child or none.
 
 			var groupsCopy = groups.ToDictionary(entry => entry.Key, entry => entry.Value);
