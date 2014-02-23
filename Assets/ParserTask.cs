@@ -8,7 +8,7 @@ namespace UnityVMFLoader
 {
 	public abstract class ParserTask
 	{
-		public abstract void Run(Node root);
+		public abstract void Run();
 
 		public bool CanRun
 		{
