@@ -165,42 +165,45 @@ namespace UnityVMFLoader
 
 			// Create lights.
 
-			var lights = root.Children.OfType<Nodes.Entity>().Where(entity => entity.ClassName.StartsWith("light")).ToList();
-
-			const float sourceToUnityBrightnessDivisor = 200;
-
-			foreach (var light in lights)
+			if (Settings.ImportLights)
 			{
-				var lightProperties = Regex.Replace(light["_light"], @"\s+", " ").Split(' ');
+				var lights = root.Children.OfType<Nodes.Entity>().Where(entity => entity.ClassName.StartsWith("light")).ToList();
 
-				var color = lightProperties.Take(3).Select(v => float.Parse(v) / 255f).ToArray();
-				var brightness = float.Parse(lightProperties[3]) / sourceToUnityBrightnessDivisor;
+				const float sourceToUnityBrightnessDivisor = 200;
 
-				var lightObject = new GameObject("Light " + light.Identifier);
-
-				lightObject.transform.position = light.Origin;
-				lightObject.transform.rotation = light.Angles;
-
-				var lightComponent = lightObject.AddComponent<Light>();
-
-				lightComponent.intensity = brightness;
-				lightComponent.color = new Color(color[0], color[1], color[2]);
-				lightComponent.range = 25.0f;
-
-				switch (light.ClassName)
+				foreach (var light in lights)
 				{
-					case "light":
+					var lightProperties = Regex.Replace(light["_light"], @"\s+", " ").Split(' ');
 
-						lightComponent.type = LightType.Point;
+					var color = lightProperties.Take(3).Select(v => float.Parse(v)/255f).ToArray();
+					var brightness = float.Parse(lightProperties[3])/sourceToUnityBrightnessDivisor;
 
-						break;
+					var lightObject = new GameObject("Light " + light.Identifier);
 
-					case "light_spot":
+					lightObject.transform.position = light.Origin;
+					lightObject.transform.rotation = light.Angles;
 
-						lightComponent.type = LightType.Spot;
-						lightComponent.spotAngle = int.Parse(light["_cone"]);;
+					var lightComponent = lightObject.AddComponent<Light>();
 
-						break;
+					lightComponent.intensity = brightness;
+					lightComponent.color = new Color(color[0], color[1], color[2]);
+					lightComponent.range = 25.0f;
+
+					switch (light.ClassName)
+					{
+						case "light":
+
+							lightComponent.type = LightType.Point;
+
+							break;
+
+						case "light_spot":
+
+							lightComponent.type = LightType.Spot;
+							lightComponent.spotAngle = int.Parse(light["_cone"]);
+
+							break;
+					}
 				}
 			}
 

@@ -9,8 +9,8 @@ namespace UnityVMFLoader
 	{
 		public static bool ImportDisplacements = false;
 
-		public static bool ImportEntities = false;
-		public static bool ImportLights = false;
+		public static bool ImportEntities = true;
+		public static bool ImportLights = true;
 
 		public static bool ImportBrushes = true;
 		public static bool ImportWorldBrushes = true;
@@ -63,8 +63,6 @@ namespace UnityVMFLoader
 			EditorGUILayout.Space();
 
 			// Entities.
-
-			GUI.enabled = false;
 
 			ImportEntities = EditorGUILayout.BeginToggleGroup("Import entities", ImportEntities);
 
