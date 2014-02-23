@@ -42,7 +42,7 @@ namespace UnityVMFLoader.Nodes
 
 					var origin = value.Split(' ').Select(v => float.Parse(v)).ToArray();
 
-					Origin = new Vector3(origin[0], origin[2], origin[1]);
+					Origin = new Vector3(origin[0], origin[1], origin[2]).SourceToUnity();
 
 					break;
 				
