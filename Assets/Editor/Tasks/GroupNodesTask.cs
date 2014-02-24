@@ -6,7 +6,7 @@ using UnityVMFLoader.Nodes;
 namespace UnityVMFLoader.Tasks
 {
 	[DependsOnTask(typeof(ParseNodesTask))]
-	public class GroupNodesTask : ParserTask
+	public class GroupNodesTask : Task
 	{
 		public Dictionary<Group, GameObject> Groups;
 

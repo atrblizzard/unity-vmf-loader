@@ -6,7 +6,7 @@ using UnityVMFLoader.Nodes;
 namespace UnityVMFLoader.Tasks
 {
 	[DependsOnTask(typeof(ImportPointEntitiesTask))]
-	public class ImportLightsTask : ParserTask
+	public class ImportLightsTask : Task
 	{
 		public override void Run()
 		{

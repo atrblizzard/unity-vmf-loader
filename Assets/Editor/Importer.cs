@@ -9,26 +9,26 @@ namespace UnityVMFLoader
 	{
 		public static List<string> VMFLines;
 
-		private static List<ParserTask> tasks;
-		private static readonly List<ParserTask> doneTasks;
+		private static List<Task> tasks;
+		private static readonly List<Task> doneTasks;
 
 		static Importer()
 		{
-			tasks = new List<ParserTask>();
-			doneTasks = new List<ParserTask>();
+			tasks = new List<Task>();
+			doneTasks = new List<Task>();
 		}
 
-		public static void AddTask<T>() where T : ParserTask
+		public static void AddTask<T>() where T : Task
 		{
 			tasks.Add(Activator.CreateInstance<T>());
 		}
 
-		public static T GetTask<T>() where T : ParserTask
+		public static T GetTask<T>() where T : Task
 		{
 			return (T) doneTasks.FirstOrDefault(task => task.GetType() == typeof(T));
 		}
 
-		public static bool TaskDone<T>() where T : ParserTask
+		public static bool TaskDone<T>() where T : Task
 		{
 			return TaskDone(typeof(T));
 		}

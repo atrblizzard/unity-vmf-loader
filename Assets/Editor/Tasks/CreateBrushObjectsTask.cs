@@ -5,7 +5,7 @@ using UnityEngine;
 namespace UnityVMFLoader.Tasks
 {
 	[DependsOnTask(typeof(ImportBrushesTask), typeof(GroupNodesTask))]
-	public class CreateBrushObjectsTask : ParserTask
+	public class CreateBrushObjectsTask : Task
 	{
 		public override void Run()
 		{

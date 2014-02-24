@@ -4,7 +4,7 @@ using UnityVMFLoader.Nodes;
 namespace UnityVMFLoader.Tasks
 {
 	[DependsOnTask(typeof(ParseNodesTask))]
-	public class ImportBrushesTask : ParserTask
+	public class ImportBrushesTask : Task
 	{
 		public IEnumerable<Solid> Solids;
 

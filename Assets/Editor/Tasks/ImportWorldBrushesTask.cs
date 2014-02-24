@@ -4,7 +4,7 @@ using UnityVMFLoader.Nodes;
 namespace UnityVMFLoader.Tasks
 {
 	[DependsOnTask(typeof(ImportBrushesTask))]
-	public class ImportWorldBrushesTask : ParserTask
+	public class ImportWorldBrushesTask : Task
 	{
 		public override void Run()
 		{

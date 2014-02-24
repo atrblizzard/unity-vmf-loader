@@ -3,7 +3,7 @@ using UnityVMFLoader.Nodes;
 
 namespace UnityVMFLoader.Tasks
 {
-	public class ParseNodesTask : ParserTask
+	public class ParseNodesTask : Task
 	{
 		public Node Root;
 

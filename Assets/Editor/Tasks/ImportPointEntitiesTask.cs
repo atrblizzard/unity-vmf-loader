@@ -7,7 +7,7 @@ using UnityVMFLoader.Nodes;
 namespace UnityVMFLoader.Tasks
 {
 	[DependsOnTask(typeof(ParseNodesTask))]
-	public class ImportPointEntitiesTask : ParserTask
+	public class ImportPointEntitiesTask : Task
 	{
 		public IEnumerable<Entity> Entities;
 

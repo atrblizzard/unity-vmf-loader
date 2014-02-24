@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace UnityVMFLoader
 {
-	public abstract class ParserTask
+	public abstract class Task
 	{
 		public virtual void Run()
 		{
@@ -29,13 +29,13 @@ namespace UnityVMFLoader
 
 		protected static readonly Dictionary<Type, List<Type>> Dependencies;
 
-		static ParserTask()
+		static Task()
 		{
 			Dependencies = new Dictionary<Type, List<Type>>();
 
-			// Get all Types with ParserTask as the base type.
+			// Get all Types with Task as the base type.
 
-			var taskTypes = Assembly.GetCallingAssembly().GetTypes().Where(type => type.BaseType == typeof(ParserTask));
+			var taskTypes = Assembly.GetCallingAssembly().GetTypes().Where(type => type.BaseType == typeof(Task));
 
 			foreach (var taskType in taskTypes)
 			{
@@ -45,7 +45,7 @@ namespace UnityVMFLoader
 
 				var dependencyAttribute = attributes.OfType<DependsOnTaskAttribute>().FirstOrDefault();
 
-				// If there are no dependencies, move over to the next ParserTask type.
+				// If there are no dependencies, move over to the next Task type.
 
 				if (dependencyAttribute == null)
 				{
