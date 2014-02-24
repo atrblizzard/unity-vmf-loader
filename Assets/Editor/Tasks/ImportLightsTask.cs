@@ -14,14 +14,12 @@ namespace UnityVMFLoader.Tasks
 
 			var lights = entities.Where(entity => entity.ClassName.StartsWith("light"));
 
-			const float sourceToUnityBrightnessDivisor = 200;
-
 			foreach (var light in lights)
 			{
 				var lightProperties = Regex.Replace(light["_light"], @"\s+", " ").Split(' ');
 
 				var color = lightProperties.Take(3).Select(v => float.Parse(v) / 255f).ToArray();
-				var brightness = float.Parse(lightProperties[3]) / sourceToUnityBrightnessDivisor;
+				var brightness = float.Parse(lightProperties[3]) * Settings.LightBrightnessScalar;
 
 				var lightObject = new GameObject("Light " + light.Identifier);
 

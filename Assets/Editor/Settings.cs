@@ -16,6 +16,7 @@ namespace UnityVMFLoader
 
 		public static bool ImportPointEntities = true;
 		public static bool ImportLights = true;
+		public static float LightBrightnessScalar = 0.005f;
 
 		public static bool ImportAssets = false;
 		public static bool ImportMaterials = false;
@@ -67,6 +68,8 @@ namespace UnityVMFLoader
 			ImportPointEntities = EditorGUILayout.BeginToggleGroup("Import point entities", ImportPointEntities);
 
 			ImportLights = EditorGUILayout.Toggle("Import lights", ImportLights);
+
+			LightBrightnessScalar = EditorGUILayout.Slider("Light brightness scalar", LightBrightnessScalar, 0, 0.02f);
 
 			EditorGUILayout.EndToggleGroup();
 
