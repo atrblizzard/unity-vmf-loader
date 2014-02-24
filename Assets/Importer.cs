@@ -42,7 +42,7 @@ namespace UnityVMFLoader
 		{
 			VMFLines = File.ReadAllLines(path).Select(s => s.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToList();
 
-			while (tasks.Count > 0)
+			while (tasks.Any(task => task.CanRun))
 			{
 				foreach (var task in tasks)
 				{
