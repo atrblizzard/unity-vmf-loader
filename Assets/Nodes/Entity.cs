@@ -11,7 +11,7 @@ namespace UnityVMFLoader.Nodes
 		public Quaternion Angles;
 		public Vector3 Origin;
 
-		private readonly Dictionary<string, string> properties;  
+		private readonly Dictionary<string, string> properties;
 
 		public Entity()
 		{
@@ -45,7 +45,7 @@ namespace UnityVMFLoader.Nodes
 					Origin = new Vector3(origin[0], origin[1], origin[2]).SourceToUnity();
 
 					break;
-				
+
 				default:
 
 					properties[key] = value;
