@@ -34,7 +34,7 @@ namespace UnityVMFLoader.Nodes
 
 					var axis = value.Split(' ').Select(v => float.Parse(v)).ToArray();
 
-					Angles = Quaternion.Euler(axis[0], axis[2], axis[1]);
+					Angles = Quaternion.Euler(-axis[0], -axis[1] + 90, axis[2]);
 
 					break;
 
