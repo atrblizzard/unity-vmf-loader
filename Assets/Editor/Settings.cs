@@ -26,14 +26,14 @@ namespace UnityVMFLoader
 		public static string AssetPath;
 		public static string AssetLibraryPath;
 
-		public static string MaterialsPath = "materials";
-		public static string MaterialsLibraryPath = "materials";
+		public static string MaterialsFolder = "materials";
+		public static string DestinationMaterialsFolder = "Materials";
 
-		public static string ModelsPath = "models";
-		public static string ModelsLibraryPath = "models";
+		public static string ModelsFolder = "models";
+		public static string DestinationModelsFolder = "Models";
 
-		public static string SoundsPath = "sound";
-		public static string SoundsLibraryPath = "sound";
+		public static string SoundsFolder = "sound";
+		public static string DestinationSoundsFolder = "Sounds";
 
 		public void OnGUI()
 		{
@@ -77,11 +77,12 @@ namespace UnityVMFLoader
 
 			// Assets.
 
+			var old = GUI.enabled;
 			GUI.enabled = false;
 
 			ImportAssets = EditorGUILayout.BeginToggleGroup("Import assets", ImportAssets);
 
-			GUILayout.Label("Importing assets will import any missing assets that the map uses.");
+			GUILayout.Label("Importing assets will import any missing assets that the map uses.", EditorStyles.wordWrappedLabel);
 
 			EditorGUILayout.Space();
 
@@ -91,31 +92,33 @@ namespace UnityVMFLoader
 
 			EditorGUILayout.Space();
 
-			GUILayout.Label("The asset path is the path to the root directory of the game. It will be used to look for the other paths.");
+			GUILayout.Label("The asset path is the path to the root directory of the game. It will be used to look for the other paths.", EditorStyles.wordWrappedLabel);
 
 			EditorGUILayout.Space();
 
 			AssetPath = EditorGUILayout.TextField("Asset path", AssetPath);
-			MaterialsPath = EditorGUILayout.TextField("Materials path", MaterialsPath);
-			ModelsPath = EditorGUILayout.TextField("Models path", ModelsPath);
-			SoundsPath = EditorGUILayout.TextField("Sounds path", SoundsPath);
+
+			MaterialsFolder = EditorGUILayout.TextField("Materials folder", MaterialsFolder);
+			ModelsFolder = EditorGUILayout.TextField("Models folder", ModelsFolder);
+			SoundsFolder = EditorGUILayout.TextField("Sounds folder", SoundsFolder);
 
 			EditorGUILayout.Space();
 
-			GUILayout.Label("The destination paths in the asset library. These will also be used to look for the existing assets before deciding if they need to be imported.");
+			GUILayout.Label("The destination asset path is relative to the Assets folder.", EditorStyles.wordWrappedLabel);
 
 			EditorGUILayout.Space();
 
-			AssetLibraryPath = EditorGUILayout.TextField("Asset path", AssetLibraryPath);
-			MaterialsLibraryPath = EditorGUILayout.TextField("Materials path", MaterialsLibraryPath);
-			ModelsLibraryPath = EditorGUILayout.TextField("Models path", ModelsLibraryPath);
-			SoundsLibraryPath = EditorGUILayout.TextField("Sounds path", SoundsLibraryPath);
+			AssetLibraryPath = EditorGUILayout.TextField("Destination asset path", AssetLibraryPath);
+
+			DestinationMaterialsFolder = EditorGUILayout.TextField("Destination materials folder", DestinationMaterialsFolder);
+			DestinationModelsFolder = EditorGUILayout.TextField("Destination models folder", DestinationModelsFolder);
+			DestinationSoundsFolder = EditorGUILayout.TextField("Destination mounds folder", DestinationSoundsFolder);
+
+			GUI.enabled = old;
 
 			EditorGUILayout.EndToggleGroup();
 
 			EditorGUILayout.Space();
-
-			GUI.enabled = true;
 		}
 
 		[MenuItem("Unity VMF Loader/Settings")]
