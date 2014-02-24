@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace UnityVMFLoader
 {
-	public static class Utils
+	public static class Utilities
 	{
 		private const float InchesInMeters = 0.0254f;
 
