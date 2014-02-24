@@ -16,7 +16,7 @@ namespace UnityVMFLoader
 		{
 			get
 			{
-				if(!Dependencies.ContainsKey(GetType()))
+				if (!Dependencies.ContainsKey(GetType()))
 				{
 					return true;
 				}
@@ -35,7 +35,7 @@ namespace UnityVMFLoader
 
 			// Get all Types with ParserTask as the base type.
 
-			var taskTypes = Assembly.GetCallingAssembly().GetTypes().Where(type => type.BaseType == typeof (ParserTask));
+			var taskTypes = Assembly.GetCallingAssembly().GetTypes().Where(type => type.BaseType == typeof(ParserTask));
 
 			foreach (var taskType in taskTypes)
 			{
@@ -47,7 +47,7 @@ namespace UnityVMFLoader
 
 				// If there are no dependencies, move over to the next ParserTask type.
 
-				if(dependencyAttribute == null)
+				if (dependencyAttribute == null)
 				{
 					continue;
 				}

@@ -25,12 +25,12 @@ namespace UnityVMFLoader
 
 		public static T GetTask<T>() where T : ParserTask
 		{
-			return (T) doneTasks.FirstOrDefault(task => task.GetType() == typeof (T));
+			return (T) doneTasks.FirstOrDefault(task => task.GetType() == typeof(T));
 		}
 
 		public static bool TaskDone<T>() where T : ParserTask
 		{
-			return TaskDone(typeof (T));
+			return TaskDone(typeof(T));
 		}
 
 		public static bool TaskDone(Type type)

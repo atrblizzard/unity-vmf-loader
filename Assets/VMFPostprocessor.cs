@@ -22,22 +22,22 @@ namespace UnityVMFLoader
 					Importer.AddTask<ParseNodesTask>();
 					Importer.AddTask<GroupNodesTask>();
 
-					if(Settings.ImportBrushes)
+					if (Settings.ImportBrushes)
 					{
 						Importer.AddTask<ImportBrushesTask>();
 					}
 
-					if(Settings.ImportWorldBrushes)
+					if (Settings.ImportWorldBrushes)
 					{
 						Importer.AddTask<ImportWorldBrushesTask>();
 					}
 
-					if(Settings.ImportDetailBrushes)
+					if (Settings.ImportDetailBrushes)
 					{
 						Importer.AddTask<ImportDetailBrushesTask>();
 					}
 
-					if(Settings.ImportWorldBrushes || Settings.ImportDetailBrushes)
+					if (Settings.ImportWorldBrushes || Settings.ImportDetailBrushes)
 					{
 						Importer.AddTask<CreateBrushObjectsTask>();
 						Importer.AddTask<DestorySingleItemGroupsTask>();
