@@ -3,19 +3,18 @@ using UnityVMFLoader.Nodes;
 
 namespace UnityVMFLoader.Tasks
 {
-	[DependsOnTask(typeof(ImportBrushesTask))]
+	[DependsOnTask(typeof(ImportBrushesTask), typeof(ImportBrushEntitiesTask))]
 	public class ImportDetailBrushesTask : ParserTask
 	{
 		public override void Run()
 		{
-			var root = Importer.GetTask<ParseNodesTask>().Root;
 			var solids = Importer.GetTask<ImportBrushesTask>().Solids;
 
-			foreach (var entity in root.Children.OfType<Entity>())
+			foreach (var entity in Importer.GetTask<ImportBrushEntitiesTask>().Entities)
 			{
-				var entities = entity.Children.OfType<Solid>();
+				var entitySolids = entity.Children.OfType<Solid>();
 
-				solids = solids == null ? entities : solids.Concat(entities);
+				solids = solids == null ? entitySolids : solids.Concat(entitySolids);
 			}
 
 			Importer.GetTask<ImportBrushesTask>().Solids = solids;

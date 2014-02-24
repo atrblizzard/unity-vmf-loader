@@ -25,6 +25,7 @@ namespace UnityVMFLoader
 					if (Settings.ImportBrushes)
 					{
 						Importer.AddTask<ImportBrushesTask>();
+						Importer.AddTask<ImportBrushEntitiesTask>();
 					}
 
 					if (Settings.ImportWorldBrushes)
@@ -40,13 +41,19 @@ namespace UnityVMFLoader
 					if (Settings.ImportWorldBrushes || Settings.ImportDetailBrushes)
 					{
 						Importer.AddTask<CreateBrushObjectsTask>();
-						Importer.AddTask<DestorySingleItemGroupsTask>();
+					}
+
+					if (Settings.ImportPointEntities)
+					{
+						Importer.AddTask<ImportPointEntitiesTask>();
 					}
 
 					if (Settings.ImportLights)
 					{
 						Importer.AddTask<ImportLightsTask>();
 					}
+
+					Importer.AddTask<DestorySingleItemGroupsTask>();
 
 					Importer.Import(Path.Combine(Directory.GetParent(Application.dataPath).FullName, asset));
 				}

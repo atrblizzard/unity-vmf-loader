@@ -9,13 +9,13 @@ namespace UnityVMFLoader
 	{
 		public static bool ImportDisplacements = false;
 
-		public static bool ImportEntities = true;
-		public static bool ImportLights = true;
-
 		public static bool ImportBrushes = true;
 		public static bool ImportWorldBrushes = true;
 		public static bool ImportDetailBrushes = true;
 		public static bool GenerateLightmapUVs = true;
+
+		public static bool ImportPointEntities = true;
+		public static bool ImportLights = true;
 
 		public static bool ImportAssets = false;
 		public static bool ImportMaterials = false;
@@ -64,7 +64,7 @@ namespace UnityVMFLoader
 
 			// Entities.
 
-			ImportEntities = EditorGUILayout.BeginToggleGroup("Import entities", ImportEntities);
+			ImportPointEntities = EditorGUILayout.BeginToggleGroup("Import point entities", ImportPointEntities);
 
 			ImportLights = EditorGUILayout.Toggle("Import lights", ImportLights);
 
@@ -73,6 +73,8 @@ namespace UnityVMFLoader
 			EditorGUILayout.Space();
 
 			// Assets.
+
+			GUI.enabled = false;
 
 			ImportAssets = EditorGUILayout.BeginToggleGroup("Import assets", ImportAssets);
 

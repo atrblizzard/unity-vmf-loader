@@ -5,14 +5,14 @@ using UnityVMFLoader.Nodes;
 
 namespace UnityVMFLoader.Tasks
 {
-	[DependsOnTask(typeof(ParseNodesTask))]
+	[DependsOnTask(typeof(ImportPointEntitiesTask))]
 	public class ImportLightsTask : ParserTask
 	{
 		public override void Run()
 		{
-			var root = Importer.GetTask<ParseNodesTask>().Root;
+			var entities = Importer.GetTask<ImportPointEntitiesTask>().Entities;
 
-			var lights = root.Children.OfType<Entity>().Where(entity => entity.ClassName.StartsWith("light")).ToList();
+			var lights = entities.Where(entity => entity.ClassName.StartsWith("light"));
 
 			const float sourceToUnityBrightnessDivisor = 200;
 
