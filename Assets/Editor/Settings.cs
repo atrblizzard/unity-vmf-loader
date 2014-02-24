@@ -18,8 +18,8 @@ namespace UnityVMFLoader
 		public static bool ImportLights = true;
 		public static float LightBrightnessScalar = 0.005f;
 
-		public static bool ImportAssets = false;
-		public static bool ImportMaterials = false;
+		public static bool ImportAssets = true;
+		public static bool ImportMaterials = true;
 		public static bool ImportModels = false;
 		public static bool ImportSounds = false;
 
@@ -77,9 +77,6 @@ namespace UnityVMFLoader
 
 			// Assets.
 
-			var old = GUI.enabled;
-			GUI.enabled = false;
-
 			ImportAssets = EditorGUILayout.BeginToggleGroup("Import assets", ImportAssets);
 
 			GUILayout.Label("Importing assets will import any missing assets that the map uses.", EditorStyles.wordWrappedLabel);
@@ -87,8 +84,14 @@ namespace UnityVMFLoader
 			EditorGUILayout.Space();
 
 			ImportMaterials = EditorGUILayout.Toggle("Import materials", ImportMaterials);
+
+			var old = GUI.enabled;
+			GUI.enabled = false;
+
 			ImportModels = EditorGUILayout.Toggle("Import models", ImportModels);
 			ImportSounds = EditorGUILayout.Toggle("Import sounds", ImportSounds);
+
+			GUI.enabled = old;
 
 			EditorGUILayout.Space();
 
@@ -99,8 +102,14 @@ namespace UnityVMFLoader
 			AssetPath = EditorGUILayout.TextField("Asset path", AssetPath);
 
 			MaterialsFolder = EditorGUILayout.TextField("Materials folder", MaterialsFolder);
+
+			old = GUI.enabled;
+			GUI.enabled = false;
+
 			ModelsFolder = EditorGUILayout.TextField("Models folder", ModelsFolder);
 			SoundsFolder = EditorGUILayout.TextField("Sounds folder", SoundsFolder);
+
+			GUI.enabled = old;
 
 			EditorGUILayout.Space();
 
@@ -111,6 +120,10 @@ namespace UnityVMFLoader
 			AssetLibraryPath = EditorGUILayout.TextField("Destination asset path", AssetLibraryPath);
 
 			DestinationMaterialsFolder = EditorGUILayout.TextField("Destination materials folder", DestinationMaterialsFolder);
+
+			old = GUI.enabled;
+			GUI.enabled = false;
+
 			DestinationModelsFolder = EditorGUILayout.TextField("Destination models folder", DestinationModelsFolder);
 			DestinationSoundsFolder = EditorGUILayout.TextField("Destination mounds folder", DestinationSoundsFolder);
 
