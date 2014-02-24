@@ -53,7 +53,7 @@ namespace UnityVMFLoader
 						Importer.AddTask<ImportLightsTask>();
 					}
 
-					Importer.AddTask<DestorySingleItemGroupsTask>();
+					Importer.AddTask<DestroySingleItemGroupsTask>();
 
 					Importer.Import(Path.Combine(Directory.GetParent(Application.dataPath).FullName, asset));
 				}

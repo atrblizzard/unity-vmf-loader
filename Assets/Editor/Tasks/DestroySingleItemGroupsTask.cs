@@ -4,7 +4,7 @@ using UnityEngine;
 namespace UnityVMFLoader.Tasks
 {
 	[DependsOnTask(typeof(GroupNodesTask), typeof(CreateBrushObjectsTask))]
-	public class DestorySingleItemGroupsTask : ParserTask
+	public class DestroySingleItemGroupsTask : ParserTask
 	{
 		public override void Run()
 		{
