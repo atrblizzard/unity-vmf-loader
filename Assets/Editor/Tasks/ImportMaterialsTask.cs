@@ -101,7 +101,7 @@ namespace UnityVMFLoader.Tasks
 						RedirectStandardError = true,
 						FileName = Path.Combine(Application.dataPath, "vtf2tga.exe"),
 						WindowStyle = ProcessWindowStyle.Hidden,
-						Arguments = String.Format("-i {0} -o {1}", textureFullPath, destinationFullPath)
+						Arguments = String.Format("-i \"{0}\" -o \"{1}\"", textureFullPath, destinationFullPath)
 					}
 				);
 
