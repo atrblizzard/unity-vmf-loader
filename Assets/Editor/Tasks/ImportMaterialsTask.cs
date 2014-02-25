@@ -47,7 +47,11 @@ namespace UnityVMFLoader.Tasks
 
 			if (Settings.AssetPath == "")
 			{
-				Debug.LogWarning("No asset path specified in settings!");
+				Debug.LogWarning("No asset path specified in settings - skipping asset import.");
+
+				base.Run();
+
+				return;
 			}
 
 			foreach (var material in materials)
@@ -56,7 +60,7 @@ namespace UnityVMFLoader.Tasks
 
 				if (!File.Exists(materialFullPath))
 				{
-					Debug.LogWarning(String.Format("Material {0} not found.", material));
+					Debug.LogWarning(String.Format("Material \"{0}\" not found.", material));
 
 					continue;
 				}
@@ -69,9 +73,9 @@ namespace UnityVMFLoader.Tasks
 
 				if (!match.Success)
 				{
-					Debug.Log(materialFile);
+					Debug.LogWarning(String.Format("Can't find $basetexture in material \"{0}\".", material));
 
-					Debug.LogError(String.Format("Can't find $basetexture of material {0}.", material));
+					continue;
 				}
 
 				var texture = match.Groups[1].Value;
