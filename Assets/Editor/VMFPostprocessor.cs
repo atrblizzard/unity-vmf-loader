@@ -43,6 +43,11 @@ namespace UnityVMFLoader
 						Importer.AddTask<CreateBrushObjectsTask>();
 					}
 
+					if (Settings.ImportAssets && Settings.ImportMaterials)
+					{
+						Importer.AddTask<ImportMaterialsTask>();
+					}
+
 					if (Settings.ImportPointEntities)
 					{
 						Importer.AddTask<ImportPointEntitiesTask>();

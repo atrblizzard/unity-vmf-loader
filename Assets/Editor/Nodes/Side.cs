@@ -22,6 +22,8 @@ namespace UnityVMFLoader.Nodes
 
 		public Vector3 Center;
 
+		public string Material;
+
 		public Vector3 UAxis;
 		public float UAxisTranslation;
 		public float UAxisScale;
@@ -117,6 +119,12 @@ namespace UnityVMFLoader.Nodes
 					Plane = new Plane(PointA, PointB, PointC);
 
 					Center = (PointA + PointB + PointC) / 3;
+
+					break;
+
+				case "material":
+
+					Material = value;
 
 					break;
 

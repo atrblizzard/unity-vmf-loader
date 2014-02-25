@@ -23,8 +23,8 @@ namespace UnityVMFLoader
 		public static bool ImportModels = false;
 		public static bool ImportSounds = false;
 
-		public static string AssetPath;
-		public static string AssetLibraryPath;
+		public static string AssetPath = "";
+		public static string DestinationAssetPath = "";
 
 		public static string MaterialsFolder = "materials";
 		public static string DestinationMaterialsFolder = "Materials";
@@ -117,7 +117,7 @@ namespace UnityVMFLoader
 
 			EditorGUILayout.Space();
 
-			AssetLibraryPath = EditorGUILayout.TextField("Destination asset path", AssetLibraryPath);
+			DestinationAssetPath = EditorGUILayout.TextField("Destination asset path", DestinationAssetPath);
 
 			DestinationMaterialsFolder = EditorGUILayout.TextField("Destination materials folder", DestinationMaterialsFolder);
 
