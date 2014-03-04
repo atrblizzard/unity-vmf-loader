@@ -31,7 +31,7 @@ namespace UnityVMFLoader.Tasks
 					eulerAngles.x = -light.Pitch;
 					lightObject.transform.eulerAngles = eulerAngles;
 				}
-				
+
 				var lightComponent = lightObject.AddComponent<Light>();
 
 				lightComponent.intensity = brightness;

@@ -7,6 +7,7 @@ namespace UnityVMFLoader.Nodes
 	public class Entity : Node
 	{
 		public string ClassName;
+		public int Pitch;
 
 		public Quaternion Angles;
 		public Vector3 Origin;
@@ -27,6 +28,12 @@ namespace UnityVMFLoader.Nodes
 				case "classname":
 
 					ClassName = value;
+
+					break;
+
+				case "pitch":					
+
+					Pitch = int.Parse(value);
 
 					break;
 
