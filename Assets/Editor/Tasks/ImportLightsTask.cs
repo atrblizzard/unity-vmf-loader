@@ -26,6 +26,12 @@ namespace UnityVMFLoader.Tasks
 				lightObject.transform.position = light.Origin;
 				lightObject.transform.rotation = light.Angles;
 
+				Vector3 eulerAngles = lightObject.transform.eulerAngles;
+				if ( light.Pitch != 0 ) {
+					eulerAngles.x = -light.Pitch;
+					lightObject.transform.eulerAngles = eulerAngles;
+				}
+				
 				var lightComponent = lightObject.AddComponent<Light>();
 
 				lightComponent.intensity = brightness;
